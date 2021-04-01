@@ -1,0 +1,62 @@
+http://api.airvisual.com/v2/countries?key={{YOUR_API_KEY}}
+{
+  "status": "success",
+  "data": [
+    {
+      "country": "Andorra"
+    },
+    {
+      "country": "Argentina"
+    },
+    {
+      "country": "Australia"
+    },
+    ...
+  ]
+}
+
+http://api.airvisual.com/v2/states?country={{COUNTRY_NAME}}&key={{YOUR_API_KEY}}
+{
+  "status": "success",
+  "data": [
+    {
+      "state": "Anhui"
+    },
+    {
+      "state": "Beijing"
+    },
+    {
+      "state": "Chongqing"
+    },
+    {
+      "state": "Fujian"
+    },
+    {
+      "state": "Gansu"
+    },
+   ...
+  ]
+}
+
+http://api.airvisual.com/v2/cities?state={{STATE_NAME}}&country={{COUNTRY_NAME}}&key={{YOUR_API_KEY}}
+{
+  "status": "success",
+  "data": [
+    {
+      "city": "Addison"
+    },
+    {
+      "city": "Albany"
+    },
+    {
+      "city": "Buffalo"
+    },
+    {
+      "city": "Carmel"
+    },
+    ...
+  ]
+}
+
+Just use nearest city
+http://api.airvisual.com/v2/nearest_city?key={{YOUR_API_KEY}}
