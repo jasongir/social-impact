@@ -5,6 +5,7 @@ import apiKey from "./api-key";
 // add button to use IP address for quick info
 // add < and restart buttons for navigating backward
 // add "bread crumbs" to show what we have done and what we have left
+// TEST comment
 
 function App() {
 	// the list of countries we will fetch
