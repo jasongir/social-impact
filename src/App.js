@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 import apiKey from "./api-key";
 
+// docs: https://api-docs.iqair.com/
+// dashboard: https://www.iqair.com/dashboard/api
+
 // IDEAS:
+// REFACTOR: make all the selection screens into a single component;
+// pass the header info as a props.children, pass the setter function, and pass the data
+
 // add button to use IP address for quick info
 // add < and restart buttons for navigating backward
 // add "bread crumbs" to show what we have done and what we have left
@@ -125,7 +131,7 @@ function App() {
             or: let user choose to find out info
          */}
 			{currentScreen === "country" ? (
-				<button onClick={handleIPRequest}>Show My Air Quality!</button>
+				<button onClick={handleIPRequest}>Just Show My Air Quality!</button>
 			) : null}
 			{currentScreen === "country" ? ( // if our currentScreen state is "country", display country component
 				<Countries countryList={countryList} selectCountry={selectCountry} /> // pass in all of our countries and the function for choosing a country
@@ -164,7 +170,7 @@ const Countries = (props) => {
 
 	return (
 		<section>
-			<h2>Find Your Country</h2>
+			<h2>Find a Country</h2>
 			<input onChange={handleInput} type="text" />
 			<div
 				className="country-btns"
@@ -201,8 +207,8 @@ const States = (props) => {
 	};
 	return (
 		<section>
-			<h1>Your country: {props.country}</h1>
-			<h2>Find Your State</h2>
+			<h1>Current country: {props.country}</h1>
+			<h2>Find a State</h2>
 			<input onChange={handleInput} type="text" />
 			<div
 				className="state-btns"
@@ -235,9 +241,9 @@ const Cities = (props) => {
 	};
 	return (
 		<section>
-			<h1>Your country: {props.country}</h1>
-			<h1>Your state: {props.state}</h1>
-			<h2>Find Your City:</h2>
+			<h1>Current country: {props.country}</h1>
+			<h1>Current state: {props.state}</h1>
+			<h2>Find a City:</h2>
 			<input onChange={handleInput} type="text" />
 			<div
 				className="city-btns"
