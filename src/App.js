@@ -30,13 +30,18 @@ function App() {
 	const [cityList, setCityList] = useState([]);
 	// the city chosen by the user
 	const [chosenCity, setChosenCity] = useState("");
+	const USER_CITY = "OWN_USER_CITY";
 
 	// the object containing all the weather/pollution data once city is chosen
 	const [results, setResults] = useState({});
+	const [errors, setErrors] = useState("");
 	// keep track of current step: country, state, city, or use IP address
 	const [currentScreen, setCurrentScreen] = useState("country");
 
-	const handleIPRequest = () => setCurrentScreen("results");
+	const handleIPRequest = () => {
+		setChosenCity(USER_CITY);
+		setCurrentScreen("results");
+	};
 
 	// function to handle selecting a country from a button
 	const selectCountry = (country) => {
@@ -56,16 +61,32 @@ function App() {
 		setCurrentScreen("results");
 	};
 
+	// reset state and screens from whichever screen we were on
+	const handleReset = () => {
+		setChosenCountry("");
+		setChosenState("");
+		setChosenCity("");
+		setCurrentScreen("country");
+	};
+
 	// fetches the list of countries on load
 	useEffect(() => {
 		fetch("http://api.airvisual.com/v2/countries?key=" + apiKey)
 			.then((res) => res.json())
 			.then((json) => setCountryList(json.data))
-			.catch((err) => console.error(err)); // sets our country list to the json data
+			.catch(() => {
+				handleReset();
+				setErrors("Uh oh, errors occurred while getting that country's data.");
+			}); // sets our country list to the json data
 
 		fetch("http://api.airvisual.com/v2/nearest_city?key=" + apiKey)
 			.then((res) => res.json())
-			.then((json) => setResults(json));
+			.then((json) => setResults(json))
+			.catch(() => {
+				handleReset();
+				setErrors("Uh oh, errors occurred while getting your city's data.");
+			});
+		return () => setErrors("");
 	}, []);
 
 	// fetches the lsit of states once we have a country
@@ -79,8 +100,14 @@ function App() {
 			)
 				.then((res) => res.json())
 				.then((json) => setStateList(json.data))
-				.catch((err) => console.error(err)); // sets our state list with fetched data
+				.catch(() => {
+					handleReset();
+					setErrors(
+						"Uh oh, errors occurred while getting that country's data."
+					);
+				}); // sets our state list with fetched data
 		}
+		return () => setErrors("");
 	}, [chosenCountry]);
 
 	// fetches the list of cities within the specified state/country
@@ -96,12 +123,25 @@ function App() {
 			)
 				.then((res) => res.json())
 				.then((json) => setCityList(json.data))
-				.catch((err) => console.error(err)); // sets our city list to the fetched data
+				.catch(() => {
+					handleReset();
+					setErrors("Uh oh, errors occurred while getting that state's data.");
+				}); // sets our city list to the fetched data
 		}
+		return () => setErrors("");
 	}, [chosenState, chosenCountry]);
 
 	// fetch the data about the chosen city/state/country
 	useEffect(() => {
+		if (chosenCity === USER_CITY) {
+			fetch("http://api.airvisual.com/v2/nearest_city?key=" + apiKey)
+				.then((res) => res.json())
+				.then((json) => setResults(json))
+				.catch(() => {
+					handleReset();
+					setErrors("Uh oh, errors occurred while getting your city's data.");
+				});
+		}
 		if (chosenCountry !== "" && chosenState !== "" && chosenCity !== "") {
 			fetch(
 				"http://api.airvisual.com/v2/city?city=" +
@@ -114,8 +154,13 @@ function App() {
 					apiKey
 			)
 				.then((res) => res.json())
-				.then((json) => setResults(json)); // set our results to the fetched data
+				.then((json) => setResults(json))
+				.catch(() => {
+					handleReset();
+					setErrors("Uh oh, errors occurred while getting that city's data.");
+				}); // set our results to the fetched data
 		}
+		return () => setErrors("");
 	}, [chosenCity, chosenCountry, chosenState]);
 
 	return (
@@ -123,36 +168,37 @@ function App() {
 			<h1>Air Quality App</h1>
 			<h2>Find out about the air you breathe</h2>
 			<div>
-				<button onClick={() => setCurrentScreen("country")}>Restart</button>
+				<button onClick={handleReset}>Reset</button>
 			</div>
-			{/* possible addition: button to use ip address 
-         
-            http://api.airvisual.com/v2/nearest_city?key={{YOUR_API_KEY}}
 
-            quickly find your air quality data
-            
-            or: let user choose to find out info
-         */}
 			{currentScreen === "country" ? (
 				<button onClick={handleIPRequest}>Just Show My Air Quality!</button>
 			) : null}
+
 			{currentScreen === "country" ? ( // if our currentScreen state is "country", display country component
-				<Countries countryList={countryList} selectCountry={selectCountry} /> // pass in all of our countries and the function for choosing a country
+				<ItemList
+					itemList={countryList}
+					selectItem={selectCountry}
+					keyName="country"
+				>
+					<h2>Find a Country</h2>
+					<h3>{errors ? errors : null}</h3>
+				</ItemList> // pass in all of our countries and the function for choosing a country
 			) : null}
+
 			{currentScreen === "state" ? (
-				<States
-					country={chosenCountry}
-					stateList={stateList}
-					selectState={selectState}
-				/>
+				<ItemList itemList={stateList} selectItem={selectState} keyName="state">
+					<h1>Current country: {chosenCountry}</h1>
+					<h2>Find a State</h2>
+				</ItemList>
 			) : null}
+
 			{currentScreen === "city" ? (
-				<Cities
-					selectCity={selectCity}
-					cityList={cityList}
-					country={chosenCountry}
-					state={chosenState}
-				/>
+				<ItemList itemList={cityList} selectItem={selectCity} keyName="city">
+					<h1>Current country: {chosenCountry}</h1>
+					<h1>Current state: {chosenState}</h1>
+					<h2>Find a City:</h2>
+				</ItemList>
 			) : null}
 			{currentScreen === "results" ? <Results results={results} /> : null}
 			{/* if our current Screen is "results", display the results data */}
@@ -160,10 +206,10 @@ function App() {
 	);
 }
 
-// Component for displaying all countries
-// can be combined with the other list components:
-// just pass in list of values, function for editing the values
-const Countries = (props) => {
+// Component for listing all available buttons and allowing users to
+// search for a certain item
+// props: props.selectItem, props.children, props.keyName, props.itemList
+const ItemList = (props) => {
 	// this stores value of user typing in input box
 	const [inputVal, setInputVal] = useState("");
 	// this handles user input: sets state
@@ -173,96 +219,27 @@ const Countries = (props) => {
 
 	return (
 		<section>
-			<h2>Find a Country</h2>
+			{props.children}
 			<input onChange={handleInput} type="text" />
 			<div
-				className="country-btns"
+				className="item-btns"
 				style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr" }}
 			>
-				{props.countryList
-					.filter((country) => {
+				{props.itemList
+					.filter((item) => {
 						// filter countries: they must start how our user input starts
-						return String(country.country)
+						return String(item[props.keyName])
 							.toLowerCase() // change country to lower case, then check if this matches the string
 							.startsWith(inputVal.toLowerCase());
 					})
-					.map((country) => {
+					.map((item) => {
 						return (
-							<div key={String(country.country)}>
+							<div key={String(item[props.keyName])}>
 								{/* map each country to a wrapper div and a button: on click, 
                            this uses the select country function with the 
                            selected country as argument (chooses that country) */}
-								<button onClick={() => props.selectCountry(country.country)}>
-									{country.country}
-								</button>
-							</div>
-						);
-					})}
-			</div>
-		</section>
-	);
-};
-
-const States = (props) => {
-	const [inputVal, setInputVal] = useState("");
-	const handleInput = (e) => {
-		setInputVal(e.target.value);
-	};
-	return (
-		<section>
-			<h1>Current country: {props.country}</h1>
-			<h2>Find a State</h2>
-			<input onChange={handleInput} type="text" />
-			<div
-				className="state-btns"
-				style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr" }}
-			>
-				{props.stateList
-					.filter((state) => {
-						return String(state.state)
-							.toLowerCase()
-							.startsWith(inputVal.toLowerCase());
-					})
-					.map((state) => {
-						return (
-							<div key={String(state.state)}>
-								<button onClick={() => props.selectState(state.state)}>
-									{state.state}
-								</button>
-							</div>
-						);
-					})}
-			</div>
-		</section>
-	);
-};
-
-const Cities = (props) => {
-	const [inputVal, setInputVal] = useState("");
-	const handleInput = (e) => {
-		setInputVal(e.target.value);
-	};
-	return (
-		<section>
-			<h1>Current country: {props.country}</h1>
-			<h1>Current state: {props.state}</h1>
-			<h2>Find a City:</h2>
-			<input onChange={handleInput} type="text" />
-			<div
-				className="city-btns"
-				style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr" }}
-			>
-				{props.cityList
-					.filter((city) => {
-						return String(city.city)
-							.toLowerCase()
-							.startsWith(inputVal.toLowerCase());
-					})
-					.map((city) => {
-						return (
-							<div key={String(city.city)}>
-								<button onClick={() => props.selectCity(city.city)}>
-									{city.city}
+								<button onClick={() => props.selectItem(item[props.keyName])}>
+									{item[props.keyName]}
 								</button>
 							</div>
 						);
