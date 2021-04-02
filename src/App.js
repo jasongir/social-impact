@@ -27,6 +27,8 @@ function App() {
 	// keep track of current step: country, state, city, or use IP address
 	const [currentScreen, setCurrentScreen] = useState("country");
 
+	const handleIPRequest = () => setCurrentScreen("results");
+
 	// function to handle selecting a country from a button
 	const selectCountry = (country) => {
 		setChosenCountry(() => String(country));
@@ -49,7 +51,12 @@ function App() {
 	useEffect(() => {
 		fetch("http://api.airvisual.com/v2/countries?key=" + apiKey)
 			.then((res) => res.json())
-			.then((json) => setCountryList(json.data)); // sets our country list to the json data
+			.then((json) => setCountryList(json.data))
+			.catch((err) => console.error(err)); // sets our country list to the json data
+
+		fetch("http://api.airvisual.com/v2/nearest_city?key=" + apiKey)
+			.then((res) => res.json())
+			.then((json) => setResults(json));
 	}, []);
 
 	// fetches the lsit of states once we have a country
@@ -62,7 +69,8 @@ function App() {
 					apiKey
 			)
 				.then((res) => res.json())
-				.then((json) => setStateList(json.data)); // sets our state list with fetched data
+				.then((json) => setStateList(json.data))
+				.catch((err) => console.error(err)); // sets our state list with fetched data
 		}
 	}, [chosenCountry]);
 
@@ -78,7 +86,8 @@ function App() {
 					apiKey
 			)
 				.then((res) => res.json())
-				.then((json) => setCityList(json.data)); // sets our city list to the fetched data
+				.then((json) => setCityList(json.data))
+				.catch((err) => console.error(err)); // sets our city list to the fetched data
 		}
 	}, [chosenState, chosenCountry]);
 
@@ -96,7 +105,7 @@ function App() {
 					apiKey
 			)
 				.then((res) => res.json())
-				.then((json) => setResults(json.data)); // set our results to the fetched data
+				.then((json) => setResults(json)); // set our results to the fetched data
 		}
 	}, [chosenCity, chosenCountry, chosenState]);
 
@@ -104,6 +113,20 @@ function App() {
 		<div className="App">
 			<h1>Air Quality App</h1>
 			<h2>Find out about the air you breathe</h2>
+			<div>
+				<button onClick={() => setCurrentScreen("country")}>Restart</button>
+			</div>
+			{/* possible addition: button to use ip address 
+         
+            http://api.airvisual.com/v2/nearest_city?key={{YOUR_API_KEY}}
+
+            quickly find your air quality data
+            
+            or: let user choose to find out info
+         */}
+			{currentScreen === "country" ? (
+				<button onClick={handleIPRequest}>Show My Air Quality!</button>
+			) : null}
 			{currentScreen === "country" ? ( // if our currentScreen state is "country", display country component
 				<Countries countryList={countryList} selectCountry={selectCountry} /> // pass in all of our countries and the function for choosing a country
 			) : null}
