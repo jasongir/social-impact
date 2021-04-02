@@ -2,40 +2,52 @@ import React, { useEffect, useState } from "react";
 import apiKey from "./api-key";
 
 function App() {
+	// the list of countries we will fetch
 	const [countryList, setCountryList] = useState([]);
+	// the country chosen by user
 	const [chosenCountry, setChosenCountry] = useState("");
 
+	// the list of states fetched once we know the country
 	const [stateList, setStateList] = useState([]);
+	// the state chosen by the user
 	const [chosenState, setChosenState] = useState("");
 
+	// the list of cities within the state chosen by user
 	const [cityList, setCityList] = useState([]);
+	// the city chosen by the user
 	const [chosenCity, setChosenCity] = useState("");
 
+	// the object containing all the weather/pollution data once city is chosen
 	const [results, setResults] = useState({});
 	// keep track of current step: country, state, city, or use IP address
 	const [currentScreen, setCurrentScreen] = useState("country");
 
+	// function to handle selecting a country from a button
 	const selectCountry = (country) => {
 		setChosenCountry(() => String(country));
 		setCurrentScreen("state");
 	};
 
+	// function to handle selecting a state from a button
 	const selectState = (state) => {
 		setChosenState(() => String(state));
 		setCurrentScreen("city");
 	};
 
+	// function to handle selecting a city w/ button
 	const selectCity = (city) => {
 		setChosenCity(() => String(city));
 		setCurrentScreen("results");
 	};
 
+	// fetches the list of countries on load
 	useEffect(() => {
 		fetch("http://api.airvisual.com/v2/countries?key=" + apiKey)
 			.then((res) => res.json())
-			.then((json) => setCountryList(json.data));
+			.then((json) => setCountryList(json.data)); // sets our country list to the json data
 	}, []);
 
+	// fetches the lsit of states once we have a country
 	useEffect(() => {
 		if (chosenCountry !== "") {
 			fetch(
@@ -45,10 +57,11 @@ function App() {
 					apiKey
 			)
 				.then((res) => res.json())
-				.then((json) => setStateList(json.data));
+				.then((json) => setStateList(json.data)); // sets our state list with fetched data
 		}
 	}, [chosenCountry]);
 
+	// fetches the list of cities within the specified state/country
 	useEffect(() => {
 		if (chosenCountry !== "" && chosenState !== "") {
 			fetch(
@@ -60,10 +73,11 @@ function App() {
 					apiKey
 			)
 				.then((res) => res.json())
-				.then((json) => setCityList(json.data));
+				.then((json) => setCityList(json.data)); // sets our city list to the fetched data
 		}
 	}, [chosenState, chosenCountry]);
 
+	// fetch the data about the chosen city/state/country
 	useEffect(() => {
 		if (chosenCountry !== "" && chosenState !== "" && chosenCity !== "") {
 			fetch(
@@ -77,7 +91,7 @@ function App() {
 					apiKey
 			)
 				.then((res) => res.json())
-				.then((json) => setResults(json.data));
+				.then((json) => setResults(json.data)); // set our results to the fetched data
 		}
 	}, [chosenCity, chosenCountry, chosenState]);
 
@@ -85,8 +99,8 @@ function App() {
 		<div className="App">
 			<h1>Air Quality App</h1>
 			<h2>Find out about the air you breathe</h2>
-			{currentScreen === "country" ? (
-				<Countries countryList={countryList} selectCountry={selectCountry} />
+			{currentScreen === "country" ? ( // if our currentScreen state is "country", display country component
+				<Countries countryList={countryList} selectCountry={selectCountry} /> // pass in all of our countries and the function for choosing a country
 			) : null}
 			{currentScreen === "state" ? (
 				<States
@@ -104,6 +118,7 @@ function App() {
 				/>
 			) : null}
 			{currentScreen === "results" ? <Results results={results} /> : null}
+			{/* if our current Screen is "results", display the results data */}
 		</div>
 	);
 }
