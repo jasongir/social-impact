@@ -13,6 +13,8 @@ import apiKey from "./api-key";
 // add "bread crumbs" to show what we have done and what we have left
 // TEST comment
 
+// a change
+
 function App() {
 	// the list of countries we will fetch
 	const [countryList, setCountryList] = useState([]);
