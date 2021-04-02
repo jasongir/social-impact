@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import apiKey from "./api-key";
 
+// IDEAS:
+// add button to use IP address for quick info
+// add < and restart buttons for navigating backward
+// add "bread crumbs" to show what we have done and what we have left
+
 function App() {
 	// the list of countries we will fetch
 	const [countryList, setCountryList] = useState([]);
@@ -123,8 +128,13 @@ function App() {
 	);
 }
 
+// Component for displaying all countries
+// can be combined with the other list components:
+// just pass in list of values, function for editing the values
 const Countries = (props) => {
+	// this stores value of user typing in input box
 	const [inputVal, setInputVal] = useState("");
+	// this handles user input: sets state
 	const handleInput = (e) => {
 		setInputVal(e.target.value);
 	};
@@ -139,13 +149,17 @@ const Countries = (props) => {
 			>
 				{props.countryList
 					.filter((country) => {
+						// filter countries: they must start how our user input starts
 						return String(country.country)
-							.toLowerCase()
+							.toLowerCase() // change country to lower case, then check if this matches the string
 							.startsWith(inputVal.toLowerCase());
 					})
 					.map((country) => {
 						return (
 							<div key={String(country.country)}>
+								{/* map each country to a wrapper div and a button: on click, 
+                           this uses the select country function with the 
+                           selected country as argument (chooses that country) */}
 								<button onClick={() => props.selectCountry(country.country)}>
 									{country.country}
 								</button>
