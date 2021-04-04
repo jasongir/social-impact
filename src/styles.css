@@ -20,7 +20,7 @@
 }
 /* header section */
 header {
-	margin: 0 0 2rem;
+	margin: 0 0 3rem;
 }
 .top-btn-container {
 	display: flex;
@@ -37,9 +37,14 @@ header {
 	}
 }
 
+/* Big Item list component */
+.btn-search-area {
+	padding: 3rem 0 0 0;
+}
+
 /* Search bar */
 .searchBar {
-	width: 200px;
+	width: 20rem;
 	padding: 0.25rem;
 }
 

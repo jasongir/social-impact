@@ -204,15 +204,15 @@ function App() {
 
 			{currentScreen === "state" ? (
 				<ItemList itemList={stateList} selectItem={selectState} keyName="state">
-					<h1>Current country: {chosenCountry}</h1>
+					<h3>Current country: {chosenCountry}</h3>
 					<h2>Find a State</h2>
 				</ItemList>
 			) : null}
 
 			{currentScreen === "city" ? (
 				<ItemList itemList={cityList} selectItem={selectCity} keyName="city">
-					<h1>Current country: {chosenCountry}</h1>
-					<h1>Current state: {chosenState}</h1>
+					<h3>Current country: {chosenCountry}</h3>
+					<h3>Current state: {chosenState}</h3>
 					<h2>Find a City:</h2>
 				</ItemList>
 			) : null}
@@ -234,12 +234,12 @@ const ItemList = (props) => {
 	};
 
 	return (
-		<section>
+		<section className="btn-search-area">
 			{props.children}
 			<input
 				onChange={handleInput}
 				type="text"
-				placeholder="Search for your country..."
+				placeholder={"Search for a " + props.keyName}
 				className="searchBar"
 			/>
 			<div className="item-btns">
