@@ -172,15 +172,24 @@ function App() {
 
 	return (
 		<div className="App">
-			<h1>Air Quality App</h1>
-			<h2>Find out about the air you breathe</h2>
-			<div>
-				<button onClick={handleReset}>Reset</button>
+			<header>
+				<h1>Air Quality App</h1>
+				<h2>Find out about the air you breathe</h2>
+			</header>
+			<div className="top-btn-container">
+				<div>
+					<button className="btn top-btn" onClick={handleReset}>
+						Reset
+					</button>
+				</div>
+				{currentScreen === "country" ? (
+					<div>
+						<button className="btn top-btn" onClick={handleIPRequest}>
+							Just Show My Air Quality!
+						</button>
+					</div>
+				) : null}
 			</div>
-
-			{currentScreen === "country" ? (
-				<button onClick={handleIPRequest}>Just Show My Air Quality!</button>
-			) : null}
 
 			{currentScreen === "country" ? ( // if our currentScreen state is "country", display country component
 				<ItemList
@@ -227,7 +236,12 @@ const ItemList = (props) => {
 	return (
 		<section>
 			{props.children}
-			<input onChange={handleInput} type="text" />
+			<input
+				onChange={handleInput}
+				type="text"
+				placeholder="Search for your country..."
+				className="searchBar"
+			/>
 			<div className="item-btns">
 				{props.itemList
 					.filter((item) => {

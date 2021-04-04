@@ -18,6 +18,30 @@
 		padding: 0 15vw;
 	}
 }
+/* header section */
+header {
+	margin: 0 0 2rem;
+}
+.top-btn-container {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.btn.top-btn {
+	width: 70vw;
+}
+@media screen and (min-width: 450px) {
+	.btn.top-btn {
+		width: 50vw;
+	}
+}
+
+/* Search bar */
+.searchBar {
+	width: 200px;
+	padding: 0.25rem;
+}
 
 /* Button area styles */
 .item-btns {
