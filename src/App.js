@@ -204,6 +204,12 @@ function App() {
 
 			{currentScreen === "state" ? (
 				<ItemList itemList={stateList} selectItem={selectState} keyName="state">
+					<button
+						className="back-btn"
+						onClick={() => setCurrentScreen("country")}
+					>
+						⬅️
+					</button>
 					<h3>Current country: {chosenCountry}</h3>
 					<h2>Find a State</h2>
 				</ItemList>
@@ -211,6 +217,12 @@ function App() {
 
 			{currentScreen === "city" ? (
 				<ItemList itemList={cityList} selectItem={selectCity} keyName="city">
+					<button
+						className="back-btn"
+						onClick={() => setCurrentScreen("state")}
+					>
+						⬅️
+					</button>
 					<h3>Current country: {chosenCountry}</h3>
 					<h3>Current state: {chosenState}</h3>
 					<h2>Find a City:</h2>
