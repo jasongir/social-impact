@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import apiKey from "./api-key";
+import "./styles.css";
 
 // docs: https://api-docs.iqair.com/
 // dashboard: https://www.iqair.com/dashboard/api
@@ -72,6 +73,7 @@ function App() {
 	// fetches the list of countries on load
 	useEffect(() => {
 		fetch("http://api.airvisual.com/v2/countries?key=" + apiKey)
+			.then(handleErrors)
 			.then((res) => res.json())
 			.then((json) => setCountryList(json.data))
 			.catch(() => {
@@ -80,6 +82,7 @@ function App() {
 			}); // sets our country list to the json data
 
 		fetch("http://api.airvisual.com/v2/nearest_city?key=" + apiKey)
+			.then(handleErrors)
 			.then((res) => res.json())
 			.then((json) => setResults(json))
 			.catch(() => {
@@ -92,12 +95,14 @@ function App() {
 	// fetches the lsit of states once we have a country
 	useEffect(() => {
 		if (chosenCountry !== "") {
+			console.log("chosen country: " + chosenCountry);
 			fetch(
 				"http://api.airvisual.com/v2/states?country=" +
 					chosenCountry +
 					"&key=" +
 					apiKey
 			)
+				.then(handleErrors)
 				.then((res) => res.json())
 				.then((json) => setStateList(json.data))
 				.catch(() => {
@@ -121,6 +126,7 @@ function App() {
 					"&key=" +
 					apiKey
 			)
+				.then(handleErrors) // helper function throws error if not good request
 				.then((res) => res.json())
 				.then((json) => setCityList(json.data))
 				.catch(() => {
@@ -135,6 +141,7 @@ function App() {
 	useEffect(() => {
 		if (chosenCity === USER_CITY) {
 			fetch("http://api.airvisual.com/v2/nearest_city?key=" + apiKey)
+				.then(handleErrors)
 				.then((res) => res.json())
 				.then((json) => setResults(json))
 				.catch(() => {
@@ -221,10 +228,7 @@ const ItemList = (props) => {
 		<section>
 			{props.children}
 			<input onChange={handleInput} type="text" />
-			<div
-				className="item-btns"
-				style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr" }}
-			>
+			<div className="item-btns">
 				{props.itemList
 					.filter((item) => {
 						// filter countries: they must start how our user input starts
@@ -234,11 +238,14 @@ const ItemList = (props) => {
 					})
 					.map((item) => {
 						return (
-							<div key={String(item[props.keyName])}>
+							<div key={String(item[props.keyName])} className="btn-container">
 								{/* map each country to a wrapper div and a button: on click, 
                            this uses the select country function with the 
                            selected country as argument (chooses that country) */}
-								<button onClick={() => props.selectItem(item[props.keyName])}>
+								<button
+									onClick={() => props.selectItem(item[props.keyName])}
+									className="btn"
+								>
 									{item[props.keyName]}
 								</button>
 							</div>
@@ -250,7 +257,15 @@ const ItemList = (props) => {
 };
 
 const Results = (props) => {
-	return <section>{JSON.stringify(props.results)}</section>;
+	return <section>{JSON.stringify(props)}</section>;
+};
+
+// function to be used in fetch().then() to make sure errors are caught
+const handleErrors = (response) => {
+	if (!response.ok) {
+		throw Error(response.statusText);
+	}
+	return response;
 };
 
 export default App;
