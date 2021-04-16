@@ -283,7 +283,24 @@ const ItemList = (props) => {
 };
 
 const Results = (props) => {
-	return <section>{JSON.stringify(props)}</section>;
+	return (
+		<section>
+			<p>{JSON.stringify(props)}</p>
+			<h1>
+				{props.results.data.city}, {props.results.data.state},{" "}
+				{props.results.data.country}
+			</h1>
+			<h2>
+				Weather: at {JSON.stringify(props.results.data.current.weather.ts)}
+			</h2>
+			<ul>
+				<li>
+					Temperature: {JSON.stringify(props.results.data.current.weather.tp)}{" "}
+					degrees C
+				</li>
+			</ul>
+		</section>
+	);
 };
 
 // function to be used in fetch().then() to make sure errors are caught
