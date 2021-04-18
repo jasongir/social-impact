@@ -39,6 +39,8 @@ function App() {
 	// keep track of current step: country, state, city, or use IP address
 	const [currentScreen, setCurrentScreen] = useState("country");
 
+	const [resultsBackground, setResultsBackground] = useState("");
+
 	const handleIPRequest = () => {
 		setChosenCity(USER_CITY);
 		setCurrentScreen("results");
@@ -68,6 +70,7 @@ function App() {
 		setChosenState("");
 		setChosenCity("");
 		setCurrentScreen("country");
+		setResultsBackground("");
 	};
 
 	// fetches the list of countries on load
@@ -92,7 +95,7 @@ function App() {
 		return () => setErrors("");
 	}, []);
 
-	// fetches the lsit of states once we have a country
+	// fetches the list of states once we have a country
 	useEffect(() => {
 		if (chosenCountry !== "") {
 			console.log("chosen country: " + chosenCountry);
@@ -173,7 +176,12 @@ function App() {
 
 	return (
 		<div
-			className={`App ${currentScreen === "results" ? "results-app" : null}`}
+			className={`App ${currentScreen === "results" ? "results-app" : ""}`}
+			style={{
+				background: resultsBackground
+					? `radial-gradient(#fff, ${resultsBackground} 99%)`
+					: "",
+			}}
 		>
 			<header>
 				<h1>Air Quality App</h1>
@@ -234,7 +242,12 @@ function App() {
 					<h2>Find a City:</h2>
 				</ItemList>
 			) : null}
-			{currentScreen === "results" ? <Results results={results} /> : null}
+			{currentScreen === "results" ? (
+				<Results
+					results={results}
+					setResultsBackground={setResultsBackground}
+				/>
+			) : null}
 			{/* if our current Screen is "results", display the results data */}
 		</div>
 	);
@@ -294,32 +307,32 @@ const Results = (props) => {
 		Green: {
 			description:
 				"Air quality is satisfactory, and air pollution poses little or no risk.",
-			color: "rgb(0, 228, 0)",
+			color: "rgba(66, 245, 96, 0.5)",
 		},
 		Yellow: {
 			description:
 				"Air quality is acceptable. However, there may be a risk for some people, particularly those who are unusually sensitive to air pollution.",
-			color: "yellow",
+			color: "rgba(239, 245, 66, 0.5)",
 		},
 		Orange: {
 			description:
 				"Members of sensitive groups may experience health effects. The general public is less likely to be affected.",
-			color: "rgb(255, 126, 0)",
+			color: "rgba(245, 206, 66)",
 		},
 		Red: {
 			description:
 				"Some members of the general public may experience health effects; members of sensitive groups may experience more serious health effects.",
-			color: "red",
+			color: "rgba(245, 87, 66)",
 		},
 		Purple: {
 			description:
 				"Health alert: The risk of health effects is increased for everyone.",
-			color: "rgb(143, 63, 151)",
+			color: "rgba(242, 34, 197)",
 		},
 		Maroon: {
 			description:
 				"Health warning of emergency conditions: everyone is more likely to be affected.",
-			color: "rgb(126, 0, 35 )",
+			color: "rgba(163, 42, 5)",
 		},
 		none: {
 			description: "",
@@ -330,6 +343,10 @@ const Results = (props) => {
 			color: "#fff",
 		},
 	};
+	// only on reload: set the background
+	useEffect(() => {
+		props.setResultsBackground(airQualityDescriptions[airQuality].color);
+	}, [airQuality, airQualityDescriptions]);
 
 	// sets the air quality
 	useEffect(() => {
@@ -381,11 +398,13 @@ const Results = (props) => {
 
 	return (
 		<section className="results-section">
-			<img
-				src={`https://www.airvisual.com/images/${props.results.data.current.weather.ic}.png`}
-				alt="current weather"
-				className="weather-image"
-			/>
+			{props.results.data.current.weather.ic ? (
+				<img
+					src={`https://www.airvisual.com/images/${props.results.data.current.weather.ic}.png`}
+					alt="current weather"
+					className="weather-image"
+				/>
+			) : null}
 
 			<h1 className="results-h1">
 				{props.results.data.city}, {props.results.data.state},{" "}

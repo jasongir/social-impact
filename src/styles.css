@@ -91,9 +91,17 @@ header {
 	width: 100%;
 	height: 2rem;
 	font-size: 1rem;
-	background-color: #dedede;
 	border: 1px solid black;
+	background-color: white;
 	border-radius: 999px;
+
+	transition-duration: 0.2s;
+}
+.btn:hover {
+	background-color: #dedede;
+}
+.btn:active {
+	font-size: 1.1em;
 }
 
 .results-section {
