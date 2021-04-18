@@ -167,11 +167,14 @@ function App() {
 					setErrors("Uh oh, errors occurred while getting that city's data.");
 				}); // set our results to the fetched data
 		}
+
 		return () => setErrors("");
 	}, [chosenCity, chosenCountry, chosenState]);
 
 	return (
-		<div className="App">
+		<div
+			className={`App ${currentScreen === "results" ? "results-app" : null}`}
+		>
 			<header>
 				<h1>Air Quality App</h1>
 				<h2>Find out about the air you breathe</h2>
@@ -192,14 +195,17 @@ function App() {
 			</div>
 
 			{currentScreen === "country" ? ( // if our currentScreen state is "country", display country component
-				<ItemList
-					itemList={countryList}
-					selectItem={selectCountry}
-					keyName="country"
-				>
-					<h2>Find a Country</h2>
-					<h3>{errors ? errors : null}</h3>
-				</ItemList> // pass in all of our countries and the function for choosing a country
+				<div>
+					<ItemList
+						itemList={countryList}
+						selectItem={selectCountry}
+						keyName="country"
+					>
+						<h2>Find a Country</h2>
+						<h3>{errors ? errors : null}</h3>
+					</ItemList>{" "}
+					{/* pass in all of our countries and the function for choosing a country*/}
+				</div>
 			) : null}
 
 			{currentScreen === "state" ? (
@@ -276,29 +282,172 @@ const ItemList = (props) => {
 								</button>
 							</div>
 						);
-					})}
+					}) || <p>couldn't find a matching {props.keyName}</p>}
 			</div>
 		</section>
 	);
 };
 
 const Results = (props) => {
+	const [airQuality, setAirQuality] = useState("");
+	const airQualityDescriptions = {
+		Green: {
+			description:
+				"Air quality is satisfactory, and air pollution poses little or no risk.",
+			color: "rgb(0, 228, 0)",
+		},
+		Yellow: {
+			description:
+				"Air quality is acceptable. However, there may be a risk for some people, particularly those who are unusually sensitive to air pollution.",
+			color: "yellow",
+		},
+		Orange: {
+			description:
+				"Members of sensitive groups may experience health effects. The general public is less likely to be affected.",
+			color: "rgb(255, 126, 0)",
+		},
+		Red: {
+			description:
+				"Some members of the general public may experience health effects; members of sensitive groups may experience more serious health effects.",
+			color: "red",
+		},
+		Purple: {
+			description:
+				"Health alert: The risk of health effects is increased for everyone.",
+			color: "rgb(143, 63, 151)",
+		},
+		Maroon: {
+			description:
+				"Health warning of emergency conditions: everyone is more likely to be affected.",
+			color: "rgb(126, 0, 35 )",
+		},
+		none: {
+			description: "",
+			color: "#fff",
+		},
+		"": {
+			description: "",
+			color: "#fff",
+		},
+	};
+
+	// sets the air quality
+	useEffect(() => {
+		setAirQuality(
+			determineAirQuality(props.results.data.current.pollution.aqius)
+		);
+		// console.log(airQuality);
+	}, [airQuality, props.results.data]);
+
+	const determineAirQuality = (number) => {
+		return number < 51
+			? "Green"
+			: number < 101
+			? "Yellow"
+			: number < 151
+			? "Orange"
+			: number < 201
+			? "Red"
+			: number < 301
+			? "Purple"
+			: "Maroon";
+	};
+
+	const colorToConcern = (color) => {
+		switch (color) {
+			case "Green":
+				return "Good";
+			case "Yellow":
+				return "Moderate";
+			case "Orange":
+				return "Unhealthy for Sensitive Groups";
+			case "Red":
+				return "Unhealthy";
+			case "Purple":
+				return "Very Unhealthy";
+			case "Maroon":
+				return "Hazardous";
+			default:
+				return "none";
+		}
+	};
+
+	const weatherUpdateTime = new Date(
+		`${props.results.data.current.weather.ts}`
+	);
+	const pollutionUpdateTime = new Date(
+		`${props.results.data.current.pollution.ts}`
+	);
+
 	return (
-		<section>
-			<p>{JSON.stringify(props)}</p>
-			<h1>
+		<section className="results-section">
+			<img
+				src={`https://www.airvisual.com/images/${props.results.data.current.weather.ic}.png`}
+				alt="current weather"
+				className="weather-image"
+			/>
+
+			<h1 className="results-h1">
 				{props.results.data.city}, {props.results.data.state},{" "}
 				{props.results.data.country}
 			</h1>
-			<h2>
-				Weather: at {JSON.stringify(props.results.data.current.weather.ts)}
-			</h2>
-			<ul>
-				<li>
-					Temperature: {JSON.stringify(props.results.data.current.weather.tp)}{" "}
-					degrees C
-				</li>
-			</ul>
+			<div className="air-quality results-container">
+				<h2>
+					Air Quality: {colorToConcern(airQuality)} (U.S. AQI:{" "}
+					{props.results.data.current.pollution.aqius})
+				</h2>
+				<h3 className="timestamp-info">
+					(as of{" "}
+					{/* hours: 
+                        if greater than 12, subtract 12.
+                        if equal to 0, show 12.  */}
+					{pollutionUpdateTime.getHours() <= 12
+						? pollutionUpdateTime.getHours()
+						: pollutionUpdateTime.getHours() === 0
+						? "12"
+						: pollutionUpdateTime.getHours() - 12}
+					{":"}
+					{/* minutes: if less than 10, add a zero */}
+					{pollutionUpdateTime.getMinutes() < 10
+						? "0" + pollutionUpdateTime.getMinutes()
+						: pollutionUpdateTime.getMinutes}{" "}
+					{/* is it in the morning or afternoon */}
+					{pollutionUpdateTime.getHours() <= 12 ? "AM" : "PM"},{" "}
+					{pollutionUpdateTime.getMonth() + 1}/{weatherUpdateTime.getDate()}/
+					{pollutionUpdateTime.getFullYear()})
+				</h3>
+
+				<p className="desc-p">
+					{airQualityDescriptions[airQuality].description}
+				</p>
+			</div>
+			<div className="weather-info results-container">
+				<h2>Weather Information:</h2>
+				<h3 className="timestamp-info">
+					(as of{" "}
+					{/* hours: 
+                     if greater than 12, subtract 12.
+                     if equal to 0, show 12.  */}
+					{weatherUpdateTime.getHours() <= 12
+						? weatherUpdateTime.getHours()
+						: weatherUpdateTime.getHours() === 0
+						? "12"
+						: weatherUpdateTime.getHours() - 12}
+					{":"}
+					{/* minutes: if less than 10, add a zero */}
+					{weatherUpdateTime.getMinutes() < 10
+						? "0" + weatherUpdateTime.getMinutes()
+						: weatherUpdateTime.getMinutes}{" "}
+					{/* is it in the morning or afternoon */}
+					{weatherUpdateTime.getHours() <= 12 ? "AM" : "PM"},{" "}
+					{weatherUpdateTime.getMonth() + 1}/{weatherUpdateTime.getDate()}/
+					{weatherUpdateTime.getFullYear()})
+				</h3>
+				<p className="desc-p">
+					{props.results.data.current.weather.tp}&#176;C /{" "}
+					{(props.results.data.current.weather.tp * 9) / 5 + 32}&#176;F
+				</p>
+			</div>
 		</section>
 	);
 };

@@ -8,16 +8,16 @@
 		Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 .App {
-	padding: 0 0.3rem;
+	padding: 0 0.3rem 50vh;
 }
 @media screen and (min-width: 500px) {
 	.App {
-		padding: 0 10vw;
+		padding: 0 10vw 50vh;
 	}
 }
 @media screen and (min-width: 700px) {
 	.App {
-		padding: 0 15vw;
+		padding: 0 15vw 50vh;
 	}
 }
 /* header section */
@@ -94,4 +94,39 @@ header {
 	background-color: #dedede;
 	border: 1px solid black;
 	border-radius: 999px;
+}
+
+.results-section {
+	background-color: white;
+	padding: 1rem;
+	margin: 2rem 0;
+	border-radius: 1em;
+	box-shadow: 10px 10px 10px #ccc, -10px 10px 10px #ccc;
+
+	min-height: 25vw;
+}
+/* Results section */
+.weather-image {
+	width: 25vw;
+	float: right;
+}
+@media screen and (max-width: 500px) {
+	.weather-image {
+		width: 30vw;
+	}
+}
+
+.results-h1 {
+	font-size: 2rem;
+	padding-bottom: 1rem;
+}
+.results-container {
+	padding: 1rem 0;
+}
+.timestamp-info {
+	font-size: 0.9rem;
+}
+
+.desc-p {
+	font-size: 1.25em;
 }
