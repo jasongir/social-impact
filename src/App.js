@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import apiKey from "./api-key";
 import "./styles.css";
-
+const apiKey = process.env.REACT_APP_apiKey;
 // docs: https://api-docs.iqair.com/
 // dashboard: https://www.iqair.com/dashboard/api
 
