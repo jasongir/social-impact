@@ -1,0 +1,20 @@
+{
+  "files": {
+    "main.css": "/social-impact/static/css/main.f26d8fda.chunk.css",
+    "main.js": "/social-impact/static/js/main.48f43445.chunk.js",
+    "main.js.map": "/social-impact/static/js/main.48f43445.chunk.js.map",
+    "runtime-main.js": "/social-impact/static/js/runtime-main.d6160fc0.js",
+    "runtime-main.js.map": "/social-impact/static/js/runtime-main.d6160fc0.js.map",
+    "static/js/2.0b828709.chunk.js": "/social-impact/static/js/2.0b828709.chunk.js",
+    "static/js/2.0b828709.chunk.js.map": "/social-impact/static/js/2.0b828709.chunk.js.map",
+    "index.html": "/social-impact/index.html",
+    "static/css/main.f26d8fda.chunk.css.map": "/social-impact/static/css/main.f26d8fda.chunk.css.map",
+    "static/js/2.0b828709.chunk.js.LICENSE.txt": "/social-impact/static/js/2.0b828709.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.d6160fc0.js",
+    "static/js/2.0b828709.chunk.js",
+    "static/css/main.f26d8fda.chunk.css",
+    "static/js/main.48f43445.chunk.js"
+  ]
+}
