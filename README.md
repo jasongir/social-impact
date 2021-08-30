@@ -1,6 +1,6 @@
 # The Air Quality App
 
-Welcome to the Air Quality App! This React site uses the [IQAir Air Quality API](https://www.iqair.com/us/) to fetch data about worldwide air quality. This app makes air quality data easily accessible to users around the world.
+Welcome to the Air Quality App! This React site uses the [IQAir Air Quality API](https://www.iqair.com/us/) to fetch data about worldwide air quality. This app makes air quality data easily accessible to users around the world. It is a responsive site to be usable by users of all device sizes.
 
 - To quickly access your local air quality, press the "Just Show My Air Quality!" button.
 - To explore air quality in cities around the world, select a country, state, and city. 
@@ -12,5 +12,6 @@ This site was created as part of [Forge](https://joinforge.co/)'s [Source](https
 
 ## Technologies
 
-- This application was structured primarily with [React.js](https://reactjs.org/)
+- This application was structured with components created with [React.js](https://reactjs.org/)
 - API requests to [http://api.airvisual.com](http://api.airvisual.com) were made using JavaScript's built-in `fetch` function
+- All styling for layout, color, and design used Vanilla CSS
